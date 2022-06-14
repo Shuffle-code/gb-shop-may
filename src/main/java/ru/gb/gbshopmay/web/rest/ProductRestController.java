@@ -6,9 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.gb.gbapimay.product.dto.ProductDto;
 import ru.gb.gbshopmay.service.ProductService;
-import ru.gb.gbshopmay.web.dto.ProductDto;
-import ru.gb.gbshopmay.web.dto.ProductManufacturerDto;
 
 import java.net.URI;
 import java.util.List;
@@ -25,11 +24,6 @@ public class ProductRestController {
         return productService.findAll();
     }
 
-    @GetMapping("/info")
-    public List<ProductManufacturerDto> getFullInfoProductList() {
-        return productService.findFullInfo();
-    }
-
     @GetMapping("/{productId}")
     public ResponseEntity<?> getProduct(@PathVariable("productId") Long id) {
         ProductDto productDto;
@@ -44,11 +38,21 @@ public class ProductRestController {
 
     @PostMapping
     public ResponseEntity<?> handlePost(@Validated @RequestBody ProductDto productDto) {
-        ProductDto savedProductDto = productService.save(productDto);
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setLocation(URI.create("/api/v1/product/" + savedProductDto.getId()));
-        return new ResponseEntity<>(httpHeaders, HttpStatus.CREATED);
+        if (productService.presenceCheckManufacturer(productDto.getManufacturer()) && productService.presenceCheckCategory(productDto.getCategories())){
+            ProductDto savedProductDto = productService.save(productDto);
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.setLocation(URI.create("/api/v1/product/" + savedProductDto.getId()));
+            return new ResponseEntity<>(httpHeaders, HttpStatus.CREATED);
+        }else return new ResponseEntity<>(HttpStatus.CONFLICT);
     }
+
+//    @PostMapping
+//    public ResponseEntity<?> handlePost(@Validated @RequestBody ProductDto productDto) {
+//        ProductDto savedProductDto = productService.save(productDto);
+//        HttpHeaders httpHeaders = new HttpHeaders();
+//        httpHeaders.setLocation(URI.create("/api/v1/product/" + savedProductDto.getId()));
+//        return new ResponseEntity<>(httpHeaders, HttpStatus.CREATED);
+//    }
 
     @PutMapping("/{productId}")
     public ResponseEntity<?> handleUpdate(@PathVariable("productId") Long id, @Validated @RequestBody ProductDto productDto) {
