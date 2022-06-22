@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Import;
 import ru.gb.gbshopmay.config.ShopConfig;
 import ru.gb.gbshopmay.entity.Manufacturer;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
@@ -38,8 +40,4 @@ class ManufacturerDaoDataJpaTest {
 
         );
     }
-
-    // todo дз findAll, delete, update
-    // todo дз* попробовать через persistenceContext(либо через Autowoired) (через EntityManager)
-
 }

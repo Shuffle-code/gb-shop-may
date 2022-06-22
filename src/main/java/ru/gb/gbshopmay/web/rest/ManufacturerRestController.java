@@ -1,13 +1,14 @@
 package ru.gb.gbshopmay.web.rest;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.gb.gbapimay.manufacturer.dto.ManufacturerDto;
 import ru.gb.gbshopmay.service.ManufacturerService;
-import ru.gb.gbshopmay.web.dto.ManufacturerDto;
 
 import java.net.URI;
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/manufacturer")
+@Slf4j
 public class ManufacturerRestController {
 
     private final ManufacturerService manufacturerService;

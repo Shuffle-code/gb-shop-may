@@ -5,12 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.gb.gbapimay.product.dto.ProductDto;
+import ru.gb.gbshopmay.dao.CategoryDao;
 import ru.gb.gbshopmay.dao.ManufacturerDao;
 import ru.gb.gbshopmay.dao.ProductDao;
 import ru.gb.gbshopmay.entity.Product;
 import ru.gb.gbshopmay.entity.enums.Status;
-import ru.gb.gbshopmay.web.dto.ProductDto;
-import ru.gb.gbshopmay.web.dto.ProductManufacturerDto;
 import ru.gb.gbshopmay.web.dto.mapper.ProductMapper;
 
 import java.util.List;
@@ -24,22 +24,11 @@ public class ProductService {
     private final ProductDao productDao;
     private final ProductMapper productMapper;
     private final ManufacturerDao manufacturerDao;
+    private final CategoryDao categoryDao;
 
-    @Transactional
-    public void init() {
-//        Manufacturer testManufacturer = Manufacturer.builder()
-//                .name("Test")
-//                .products(new HashSet<>(productDao.findAll()))
-//                .build();
-//
-//        manufacturerDao.save(testManufacturer);
-        Product product = productDao.findById(3L).get();
-        product.setManufacturer(manufacturerDao.findById(2L).get());
-        productDao.save(product);
-    }
 
     public ProductDto save(ProductDto productDto) {
-        Product product = productMapper.toProduct(productDto, manufacturerDao);
+        Product product = productMapper.toProduct(productDto, manufacturerDao, categoryDao);
         if (product.getId() != null) {
             productDao.findById(productDto.getId()).ifPresent(
                     (p) -> product.setVersion(p.getVersion())
@@ -76,11 +65,4 @@ public class ProductService {
         });
     }
 
-
-    public List<ProductManufacturerDto> findFullInfo() {
-        return productDao.findAll()
-                .stream()
-                .map(productMapper::toProductManufacturerDto)
-                .collect(Collectors.toList());
-    }
 }
