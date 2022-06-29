@@ -5,12 +5,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import ru.gb.gbapimay.common.enums.Status;
 import ru.gb.gbapimay.product.dto.ProductDto;
 import ru.gb.gbshopmay.dao.CategoryDao;
 import ru.gb.gbshopmay.dao.ManufacturerDao;
 import ru.gb.gbshopmay.dao.ProductDao;
 import ru.gb.gbshopmay.entity.Product;
-import ru.gb.gbshopmay.entity.enums.Status;
+import ru.gb.gbshopmay.entity.ProductImage;
 import ru.gb.gbshopmay.web.dto.mapper.ProductMapper;
 
 import java.util.List;
@@ -25,22 +27,44 @@ public class ProductService {
     private final ProductMapper productMapper;
     private final ManufacturerDao manufacturerDao;
     private final CategoryDao categoryDao;
+    private final ProductImageService productImageService;
 
 
-    public ProductDto save(ProductDto productDto) {
+    public ProductDto save(ProductDto productDto, MultipartFile multipartFile) {
         Product product = productMapper.toProduct(productDto, manufacturerDao, categoryDao);
         if (product.getId() != null) {
             productDao.findById(productDto.getId()).ifPresent(
                     (p) -> product.setVersion(p.getVersion())
             );
         }
+
+        if (multipartFile != null && !multipartFile.isEmpty()) {
+            String pathToSavedFile = productImageService.save(multipartFile);
+            ProductImage productImage = ProductImage.builder()
+                    .path(pathToSavedFile)
+                    .product(product)
+                    .build();
+            product.addImage(productImage);
+        }
+//        final ProductDto savedProductDto = ;
+
         return productMapper.toProductDto(productDao.save(product));
+    }
+
+    @Transactional
+    public ProductDto save(final ProductDto productDto) {
+        return save(productDto, null);
     }
 
 
     @Transactional(readOnly = true)
     public ProductDto findById(Long id) {
         return productMapper.toProductDto(productDao.findById(id).orElse(null));
+    }
+
+    @Transactional(readOnly = true)
+    public Optional<Product> findProductById(Long id) {
+        return productDao.findById(id);
     }
 
     public List<ProductDto> findAll() {
