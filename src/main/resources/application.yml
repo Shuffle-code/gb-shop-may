@@ -1,3 +1,7 @@
+storage:
+  location:
+    './storage'
+
 server:
   port: 8080
 spring:
@@ -10,6 +14,12 @@ spring:
       label: ${SPRING_CLOUD_CONFIG_LABEL:master}
       username: ${SPRING_CLOUD_CONFIG_USERNAME:geek_user}
       password: ${SPRING_CLOUD_CONFIG_PASSWORD:geek_pass}
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+      enabled: true
+
 
 
 # /{label}/{application}-{profile}.yml

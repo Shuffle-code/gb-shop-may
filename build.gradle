@@ -14,6 +14,7 @@ configurations {
     }
 }
 
+
 compileJava {
     options.compilerArgs += [
             '-Amapstruct.defaultComponentModel=spring'
@@ -31,9 +32,14 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
     implementation 'org.springframework.cloud:spring-cloud-starter-config'
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
     implementation 'org.springframework.cloud:spring-cloud-starter-bootstrap'
+
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
 
 
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
@@ -51,7 +57,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'com.h2database:h2'
 
-    implementation files('lib/gb-api-may-0.0.7-plain.jar')
+    implementation files('lib/gb-api-may-0.0.11-plain.jar')
 }
 
 dependencyManagement {
